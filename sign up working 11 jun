@@ -1,0 +1,400 @@
+
+import React, { Component } from 'react';
+import firebase from 'firebase';
+import  auth  from   '@react-native-firebase/auth';
+import fire from  './Config/fire.js';
+import firestore from   "@react-native-firebase/firestore";
+// import db from './Config/fire.js'
+// import firestore from 'firebase/firestore';
+// import firestore;
+
+import {
+  AppRegistry,
+  StyleSheet,
+  // Text,
+  View,
+  Image,
+  // TextInput,
+  // Button,
+  Dimensions,
+  TextStyle,
+  TouchableHighlight,
+  Icon,
+  Alert,
+  Flatlist,
+  ScrollView,
+TouchableOpacity,ImageBackground} from 'react-native';
+
+///////////////////////////////////////////////////////
+
+import  { useState } from 'react'
+// import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import { Text } from 'react-native-paper'
+import Background from './src/components/Background'
+import Logo from './src/components/Logo'
+import Header from './src/components/Header'
+import Button from './src/components/Button'
+import TextInput from './src/components/TextInput'
+import BackButton from './src/components/BackButton'
+import { theme } from './src/core/theme'
+import { emailValidator } from './src/helpers/emailValidator'
+import { passwordValidator } from './src/helpers/passwordValidator'
+import { nameValidator } from './src/helpers/nameValidator'
+
+export default class Signup extends React.Component
+{
+
+        constructor(props){
+        super(props);
+// this.firestoreRef = firebase.firestore().collection('users');
+        this.state=
+        {
+          email:'',
+          password:'',
+          fname:'',
+          lname:'',
+          confirmPass:'',
+          displayName:'',
+          // uid:'',
+          currentUser:'',
+        }
+      }
+      
+      goback = () =>{
+        this.props.navigation.goBack()
+      }
+
+      Register=() =>
+    {
+
+ 
+      // const  {email, passsword, fname} = this.state;
+         if (!this.state.fname) {
+     alert("First Name field is required!");
+
+   }
+    else if (!this.state.lname) {
+alert('Last name field is required!');
+}
+ else if(!this.state.displayName) {
+alert('user name field is required!');
+}
+     else if (!this.state.email) {
+     alert('Email field is required!');
+   }
+    else if (!this.state.password) {
+     alert('Password field is required!');
+   }
+     if(this.state.password==this.state.confirmPass)
+    {
+
+      // const currentUser = firebase.auth().currentUser;
+      //  if(currentUser != null){
+      //   const db = firebase.firestore();
+      //      db.collection('collection')
+
+      //      .doc(currentUser.uid)
+      //        .set({
+      //    fname: this.state.fname,
+      //    lname: this.state.lname,
+      //    displayName:this.state.displayName,
+      //    email: this.state.email,
+      //    password:this.state.password,
+      //    confirmPass:this.state.confirmPass,
+      //    key:currentUser.uid,
+
+      //        });
+      //      }
+            firebase
+        		.auth()
+        		 .createUserWithEmailAndPassword(this.state.email, this.state.password)
+        		 .then((res) => {
+              ({
+              })
+               
+      
+                    console.log(res)
+              
+                    console.log('User account created & signed in!');
+                    Alert.alert('Account Created Successfully! ');
+                    
+              // })
+
+              const currentUser = firebase.auth().currentUser;
+              if(currentUser != null){
+               const db = firebase.firestore();
+                  db.collection('collection')
+       
+                  .doc(currentUser.uid)
+                    .set({
+                fname: this.state.fname,
+                lname: this.state.lname,
+                displayName:this.state.displayName,
+                email: this.state.email,
+                password:this.state.password,
+                confirmPass:this.state.confirmPass,
+                key:currentUser.uid,
+       
+                    });
+                  } 
+       this.props.navigation.navigate('Dashboard')
+
+        		  })
+        		  .catch(error =>
+                {
+        		  if  (error.code === 'auth/email-already-in-use')
+{
+        		     console.log(' Email address is already in use!');
+                 alert('Email address is already in use!');
+
+}
+                  else if(error.code === 'auth/invalid-email')
+                 console.log('Email address is invalid!');
+                //alert('Email address is Invalid!');
+
+      console.error(error);
+    }
+    );
+
+    
+  
+//     firebase.firestore()
+//         .collection("users")
+//           .doc(uid)
+//           .set({
+//       fname: this.state.fname,
+//       lname: this.state.lname,
+//       displayName:this.state.displayName,
+//       email: this.state.email,
+//       password:this.state.password,
+//       confirmPass:this.state.confirmPass,
+
+          // });
+
+        
+}
+
+else if (!this.state.confirmPass) {
+alert('Confirm password field is required!');
+}
+
+else Alert.alert('Password does not match!');
+
+}
+
+
+      
+
+          	
+ComponentDidMount()
+{
+
+
+}
+      onChangeTextFName = (text) =>{
+              this.setState({fname:text});
+            }
+
+                onChangeTextDisplayName = (text) =>{
+                        this.setState({displayName:text});
+
+                      }
+
+
+
+            onChangeTextLName = (text) =>{
+              this.setState({lname:text});
+            }
+
+            onChangeTextEmail = (text) =>{
+              this.setState({email:text});
+              console.log(this.state.email);
+            }
+            onChangeTextPassword = (text) =>{
+              this.setState({password:text});
+              console.log(this.state.password);
+            }
+          onChangeTextConfirmPassword = (text) =>{
+              this.setState({confirmPass:text});
+              console.log(this.state.confirmPass);
+            }
+
+
+
+  render()
+  {
+
+  return(
+
+
+<Background>
+      <BackButton goBack={this.goback} />
+      <Logo />
+      <Header>Create Account</Header>
+      <TextInput
+        label="FName"
+        returnKeyType="next"
+        // value={name.value}
+        value={this.state.fname}
+        // onChangeText={(text) => setName({ value: text, error: '' })}
+        onChangeText={this.onChangeTextFName}
+        // error={!!name.error}
+        // errorText={name.error}
+      />
+
+{/* 
+//       style={styles.inputStyle}
+//       onChangeText={this.onChangeTextFName}
+//       value={this.state.fname}
+//       placeholder=" Enter first name" */}
+
+      <TextInput
+        label="LName"
+        returnKeyType="next"
+        // value={name.value}
+        value={this.state.lname}
+        // onChangeText={(text) => setName({ value: text, error: '' })}
+        onChangeText={this.onChangeTextLName}
+        // error={!!name.error}
+        // errorText={name.error}
+      />
+
+<TextInput
+        label="DName"
+        returnKeyType="next"
+        // value={name.value}
+        // value={this.state.lname}
+      
+        //         style={styles.inputStyle}
+        onChangeText={this.onChangeTextDisplayName}
+        value={this.state.displayName}
+//         placeholder="Enter Username"
+      
+      />
+
+
+
+      <TextInput
+        label="Email"
+        returnKeyType="next"
+        autoCapitalize="none"
+        autoCompleteType="email"
+        textContentType="emailAddress"
+        keyboardType="email-address"
+        
+                    onChangeText={this.onChangeTextEmail}
+            value={this.state.email}
+
+      />
+      <TextInput
+        label="Password"
+        returnKeyType="done"
+        // value={password.value}
+        // onChangeText={(text) => setPassword({ value: text, error: '' })}
+        // error={!!password.error}
+        // errorText={password.error}
+        // secureTextEntry
+                              secureTextEntry={true}
+                      onChangeText={this.onChangeTextPassword}
+                    value={this.state.password}
+
+      />
+
+<TextInput
+        label="ConfirmPassword"
+        returnKeyType="done"
+        // value={password.value}
+        // onChangeText={(text) => setPassword({ value: text, error: '' })}
+        // error={!!password.error}
+        // errorText={password.error}
+        // secureTextEntry
+                              
+
+                    secureTextEntry={true}
+          onChangeText={this.onChangeTextConfirmPassword}
+            value={this.state.confirmPass}
+
+      />
+
+      <Button
+        mode="contained"
+        // onPress={onSignUpPressed}
+        onPress={this.Register}
+        style={{ marginTop: 24 }}
+      >
+        Sign Up
+      </Button>
+
+      {/* <View style={styles.row}>
+        <Text>Already have an account? </Text>
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')}>
+          <Text style={styles.link}>Login</Text>
+        </TouchableOpacity>
+      </View> */}
+    </Background>
+
+    );
+  }
+  }
+//   const styles = StyleSheet.create({
+//     container: {
+//       flex: 1,
+//       display: "flex",
+//       flexDirection: "column",
+//       justifyContent: "center",
+//       padding: 10,
+//       backgroundColor:'#b0d9e8',
+//       alignItems:"center",
+//     },
+//     inputStyle: {
+//       width: '100%',
+//       marginBottom: 10,
+//       paddingBottom: 18,
+//       alignSelf: "center",
+//       borderColor:'grey',
+//       alignItems:'center',
+//       borderBottomWidth: 1,
+//       textAlign:'left',
+//       borderRadius:5,
+//       marginBottom:10,
+
+//     },
+//   button:{
+//     backgroundColor: '#33BEFF',
+//     borderWidth: 0,
+//     textAlign: 'center',
+//     color: '#33BEFF',
+//     borderColor: '#7DE24E',
+//     height: 40,
+//     alignItems: 'center',
+//     borderRadius: 15,
+//     marginLeft: 35,
+//     marginRight: 35,
+//     marginTop: 20,
+//     marginBottom: 52.35,
+//     	},
+//       loginText: {
+//         color: 'white',
+//     textAlign: 'center',
+//     fontSize: 14,
+//       },
+//       buttonTextStyle: {
+
+//     color: '#FFFFFF',
+//     paddingVertical: 10,
+//     fontSize: 17,
+//     width:Dimensions.get('window').width*0.67,height:Dimensions.get('window').height*0.67,
+//     textAlign:'center',
+
+//   },
+// image:
+// {
+//   marginBottom:22,
+//   height:100,
+//   width:100,
+//   resizeMode:'cover',
+
+// },
+
+//   }
+//   );
